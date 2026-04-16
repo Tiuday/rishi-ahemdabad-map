@@ -1,0 +1,549 @@
+/* MapCanvas.css — Safe Routes · Calm White Glassmorphic Aesthetic */
+
+.map-container {
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(ellipse at 50% 30%, #ffffff 0%, #f0f4f8 60%, #e8eef5 100%);
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #334155;
+}
+
+/* ─── Glass Header ─────────────────────────────── */
+
+.map-glass-header {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  padding: 1.15rem 1.5rem;
+  border-radius: 1.25rem;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.03);
+  z-index: 10;
+  animation: fadeSlideIn 0.8s ease-out;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.map-glass-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
+  letter-spacing: -0.02em;
+}
+
+.map-glass-header p {
+  margin: 0.15rem 0 0 0;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.stats {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #475569;
+}
+
+.stats span {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* ─── Legend ────────────────────────────────────── */
+
+.map-legend {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 0.9rem 1.15rem;
+  border-radius: 1rem;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.04);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: #475569;
+  animation: fadeSlideIn 1s ease-out;
+}
+
+.legend-title {
+  font-weight: 700;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #94a3b8;
+  margin-bottom: 0.15rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1.5px solid white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.west-dot { background: #64748b; }
+.east-dot { background: #475569; }
+.selected-dot { background: #22c55e; }
+
+.bridge-line {
+  width: 20px;
+  height: 2.5px;
+  display: inline-block;
+  background: #94a3b8;
+  border-radius: 2px;
+}
+
+.legend-sep {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 0.2rem 0;
+}
+
+.legend-hint {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* ─── Canvas ───────────────────────────────────── */
+
+.canvas-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.interactive-svg-map {
+  width: 92%;
+  height: 92%;
+  max-width: 1600px;
+}
+
+/* ─── Region & River Labels ────────────────────── */
+
+.region-label {
+  font-size: 16px;
+  font-weight: 700;
+  fill: #cbd5e1;
+  letter-spacing: 0.25em;
+  text-anchor: middle;
+}
+
+.river-label {
+  font-size: 12px;
+  font-weight: 600;
+  fill: #93c5fd;
+  text-anchor: middle;
+  letter-spacing: 0.08em;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.river-flow {
+  stroke-dasharray: 12 8;
+  animation: riverFlow 20s linear infinite;
+}
+
+@keyframes riverFlow {
+  to { stroke-dashoffset: -200; }
+}
+
+/* ─── Route Styles ─────────────────────────────── */
+
+.route-line {
+  stroke: #cbd5e1;
+  stroke-width: 1.2;
+  stroke-dasharray: 5 4;
+  opacity: 0.35;
+  transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: dashAnim 80s linear infinite;
+}
+
+.route-bridge {
+  stroke: #94a3b8;
+  stroke-width: 2;
+  stroke-dasharray: none;
+  opacity: 0.7;
+}
+
+.route-active {
+  stroke: #3b82f6;
+  stroke-width: 2.5;
+  opacity: 1;
+  stroke-dasharray: 8 5;
+  animation: dashAnim 12s linear infinite;
+  filter: url(#glow);
+}
+
+.route-selected {
+  stroke: #22c55e;
+  stroke-width: 3;
+  opacity: 1;
+  stroke-dasharray: 10 6;
+  animation: dashAnim 8s linear infinite;
+  filter: url(#glow);
+}
+
+.route-dimmed {
+  opacity: 0.08 !important;
+  stroke-width: 0.8 !important;
+}
+
+@keyframes dashAnim {
+  to { stroke-dashoffset: -1000; }
+}
+
+/* ─── Node Styles ──────────────────────────────── */
+
+.node-group {
+  cursor: pointer;
+  transition: all 0.35s ease;
+}
+
+.node-glow {
+  fill: #bfdbfe;
+  opacity: 0;
+  transition: all 0.35s ease;
+}
+
+.node-core {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  stroke: white;
+  stroke-width: 1.5;
+}
+
+.node-core.west { fill: #64748b; }
+.node-core.east { fill: #475569; }
+
+/* Hover state (no selection active) */
+.node-hovered .node-glow { opacity: 0.5; }
+.node-hovered .node-core {
+  fill: #2563eb;
+  stroke: white;
+  stroke-width: 2;
+  filter: url(#glow);
+}
+
+/* Selected node */
+.node-selected .node-glow {
+  fill: #bbf7d0;
+  opacity: 0.6;
+}
+
+/* Connected nodes */
+.node-connected .node-glow {
+  fill: #bfdbfe;
+  opacity: 0.45;
+}
+
+.connected-core {
+  fill: #3b82f6;
+  stroke: white;
+  stroke-width: 2;
+  filter: url(#glow);
+}
+
+/* Dimmed state */
+.node-dimmed {
+  opacity: 0.15;
+}
+
+/* Shield icon for selected node */
+.shield-icon {
+  fill: #22c55e;
+  stroke: white;
+  stroke-width: 1;
+  filter: url(#selectedGlow);
+  animation: shieldPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes shieldPop {
+  0% { transform: scale(0.3); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Pulse rings */
+.pulse-ring {
+  fill: none;
+  stroke: #22c55e;
+  stroke-width: 1.5;
+  opacity: 0;
+}
+
+.pulse-1 {
+  animation: pulseOut 2s ease-out infinite;
+}
+
+.pulse-2 {
+  animation: pulseOut 2s ease-out 0.6s infinite;
+}
+
+@keyframes pulseOut {
+  0% { r: 12; opacity: 0.5; stroke-width: 2; }
+  100% { r: 35; opacity: 0; stroke-width: 0.5; }
+}
+
+/* ─── Node Labels ──────────────────────────────── */
+
+.node-label {
+  font-size: 12px;
+  font-weight: 600;
+  fill: #1e293b;
+  text-anchor: middle;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: white;
+  stroke-width: 4px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: fadeIn 0.25s ease;
+}
+
+.label-selected {
+  font-size: 14px;
+  font-weight: 700;
+  fill: #166534;
+}
+
+.label-connected {
+  font-size: 11px;
+  fill: #1e40af;
+}
+
+/* ─── Tooltip Card (hover, no selection) ───────── */
+
+.tooltip-card {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  padding: 1.15rem 1.4rem;
+  border-radius: 1.15rem;
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.06),
+    0 1px 3px rgba(0, 0, 0, 0.04);
+  min-width: 210px;
+  z-index: 20;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tooltip-card h3 {
+  margin: 0 0 0.2rem 0;
+  font-size: 1.1rem;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.tooltip-card .region-tag,
+.detail-panel .region-tag {
+  display: inline-block;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+}
+
+.tooltip-details {
+  padding-top: 0.5rem;
+  border-top: 1px solid #f1f5f9;
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.tooltip-hint {
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* ─── Detail Panel (selected node) ─────────────── */
+
+.detail-panel {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 280px;
+  max-height: calc(100vh - 3rem);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 1.25rem;
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.04);
+  z-index: 20;
+  animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 1rem 1.15rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.detail-shield-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #f0fdf4;
+  border-radius: 0.75rem;
+  flex-shrink: 0;
+}
+
+.detail-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #0f172a;
+  font-weight: 700;
+  flex: 1;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+
+.close-btn:hover {
+  color: #475569;
+}
+
+/* ─── Route List ───────────────────────────────── */
+
+.detail-routes {
+  padding: 0.85rem 1.15rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.detail-routes h4 {
+  margin: 0 0 0.6rem 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.detail-routes ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.detail-routes li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 0.82rem;
+  color: #334155;
+}
+
+.detail-routes li:hover {
+  background: #f1f5f9;
+}
+
+.route-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.route-dot.west { background: #64748b; }
+.route-dot.east { background: #475569; }
+
+.route-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.route-arrow {
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+/* ─── Animations ───────────────────────────────── */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translate(-16px, -8px); }
+  to   { opacity: 1; transform: translate(0, 0); }
+}
