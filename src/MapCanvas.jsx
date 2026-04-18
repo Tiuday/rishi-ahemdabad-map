@@ -23,7 +23,7 @@ function getConnectedNodes(nodeId) {
   return { connectedRoutes, connectedIds };
 }
 
-const MapCanvas = () => {
+const MapCanvas = ({ onLogout }) => {
   const [hoveredNode, setHoveredNode] = useState(null);
   const [selectedNode, setSelectedNode] = useState(null);
 
@@ -52,13 +52,16 @@ const MapCanvas = () => {
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
           </svg>
           <div>
-            <h2>Safe Routes — Ahmedabad</h2>
+            <h2>Navi Secure — Ahmedabad</h2>
             <p>Discover safe connections across the city</p>
           </div>
         </div>
         <div className="stats">
           <span><PinIcon /> {nodes.length} Locations</span>
           <span><NavIcon /> {routes.length} Routes</span>
+          {onLogout && (
+            <button onClick={onLogout} className="logout-btn">Sign out</button>
+          )}
         </div>
       </div>
 
